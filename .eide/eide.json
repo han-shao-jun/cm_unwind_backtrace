@@ -135,7 +135,7 @@
       "compileConfig": {
         "cpuType": "Cortex-M3",
         "floatingPointHardware": "none",
-        "scatterFilePath": "MDK-ARM\\uart\\uart.sct",
+        "scatterFilePath": "MDK-ARM\\uart.sct",
         "useCustomScatterFile": true,
         "storageLayout": {
           "RAM": [
