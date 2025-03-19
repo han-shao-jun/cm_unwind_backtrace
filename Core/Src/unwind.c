@@ -383,8 +383,12 @@ int unwind_frame(struct stack_frame *frame)
 		return -URC_FAILURE;
 
 	frame->sp = ctrl.vrs[SP];
-	frame->lr = ctrl.vrs[LR];
-	frame->pc = ctrl.vrs[PC];
+
+	/* fix the LR address in thumb mode */
+	frame->lr = ctrl.vrs[LR] - 1;
+
+	/* fix the SP address in thumb mode */
+	frame->pc = ctrl.vrs[PC] - 5;
 	frame->lr_addr = ctrl.lr_addr;
 	printf("\n");
 	return URC_OK;
@@ -395,7 +399,8 @@ void unwind_backtrace()
 	struct stack_frame frame = {0};
 	
 	frame.pc = __current_pc();
-	frame.lr = __return_address();
+	/* fix the LR address in thumb mode */
+	frame.lr = __return_address() - 1;
 	frame.sp = __current_sp();
 	
 	while (1) {
@@ -405,8 +410,7 @@ void unwind_backtrace()
 		urc = unwind_frame(&frame);
 		if (urc < 0)
 			break;
-
-		printf("call 0x%p from 0x%p\n", (void *)(where - 1), (void *)(frame.pc - 1));
+		printf("call 0x%p from 0x%p\n", (void *)(where), (void *)frame.pc);
 	}
 	
 }
